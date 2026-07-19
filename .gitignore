@@ -6,8 +6,7 @@ java/target/
 *.log
 
 # Generated output files
-output*.pcap
-output.pcap
+*.pcap
 
 # OS files
 .DS_Store

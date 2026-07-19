@@ -1,0 +1,4 @@
+Total Packets: 42,240
+Single-threaded Throughput: 61,758.03 packets/sec
+Multi-threaded Throughput: 34,033.69 packets/sec
+Speedup: 0.55x

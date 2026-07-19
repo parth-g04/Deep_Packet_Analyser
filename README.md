@@ -1,6 +1,6 @@
 # DPI Engine - Deep Packet Inspection System (Java)
 
-This document explains **everything** about this project - from basic networking concepts to the complete Java code architecture. After reading this, you should understand exactly how packets flow through the system without needing to read the code.
+A high-performance, multi-threaded Deep Packet Inspection (DPI) Engine built from scratch in core Java (no high-level wrapper libraries). By manually decoding Layer 2 (Ethernet), Layer 3 (IPv4), and Layer 4 (TCP/UDP) headers using Java's `ByteBuffer`, the engine extracts plaintext SNI fields from TLS Client Hello handshakes to classify and block encrypted traffic (e.g. YouTube, Facebook) in real-time. Features sharded load balancing, thread-safe rule managers, and consistent packet-flow hashing.
 
 ---
 
@@ -17,7 +17,8 @@ This document explains **everything** about this project - from basic networking
 9. [How Blocking Works](#9-how-blocking-works)
 10. [Building and Running](#10-building-and-running)
 11. [Understanding the Output](#11-understanding-the-output)
-12. [Extending the Project](#12-extending-the-project)
+12. [Performance Benchmark & Concurrency Analysis](#12-performance-benchmark--concurrency-analysis)
+13. [Extending the Project](#13-extending-the-project)
 
 ---
 
@@ -767,6 +768,8 @@ Opened PCAP file: ..\test_dpi.pcap
 [LB0] Started (serving FP0-FP1)
 [LB1] Started (serving FP2-FP3)
 [Reader] Processing packets...
+[FP0] BLOCKED packet: App YouTube
+[FP0] BLOCKED packet: Domain www.facebook.com
 [Reader] Done reading 77 packets
 [LB0] Stopped
 [LB1] Stopped
@@ -775,34 +778,66 @@ Opened PCAP file: ..\test_dpi.pcap
 [FP2] Stopped (processed 0 packets)
 [FP3] Stopped (processed 24 packets)
 
-????????????????????????????????????????????????????????????????
-?                      PROCESSING REPORT                        ?
-????????????????????????????????????????????????????????????????
-? Total Packets:                77                             ?
-? Total Bytes:                5738                             ?
-? TCP Packets:                  77                             ?
-? UDP Packets:                   0                             ?
-????????????????????????????????????????????????????????????????
-? Forwarded:                    77                             ?
-? Dropped:                       0                             ?
-????????????????????????????????????????????????????????????????
-? THREAD STATISTICS                                             ?
-?   LB0 dispatched:             53                             ?
-?   LB1 dispatched:             24                             ?
-?   FP0 processed:              53                             ?
-?   FP1 processed:               0                             ?
-?   FP2 processed:               0                             ?
-?   FP3 processed:              24                             ?
-????????????????????????????????????????????????????????????????
-?                   APPLICATION BREAKDOWN                       ?
-????????????????????????????????????????????????????????????????
-? Unknown               25  32.5% ######                       ?
-? HTTPS                 18  23.4% ####                         ?
-????????????????????????????????????????????????????????????????
++--------------------------------------------------------------+
+|                      PROCESSING REPORT                        |
++--------------------------------------------------------------+
+| Total Packets:                77                             |
+| Total Bytes:                5738                             |
+| TCP Packets:                  77                             |
+| UDP Packets:                   0                             |
++--------------------------------------------------------------+
+| Forwarded:                    75                             |
+| Dropped:                       2                             |
++--------------------------------------------------------------+
+| THREAD STATISTICS                                             |
+|   LB0 dispatched:             53                             |
+|   LB1 dispatched:             24                             |
+|   FP0 processed:              53                             |
+|   FP1 processed:               0                             |
+|   FP2 processed:               0                             |
+|   FP3 processed:              24                             |
++--------------------------------------------------------------+
+|                   APPLICATION BREAKDOWN                       |
++--------------------------------------------------------------+
+| Unknown               25  32.5% ######                       |
+| HTTPS                  2   2.6%                              |
+| Amazon                 1   1.3%                              |
+| YouTube                1   1.3%                              |
+| Cloudflare             1   1.3%                              |
+| Microsoft              1   1.3%                              |
+| TikTok                 1   1.3%                              |
+| Zoom                   1   1.3%                              |
+| GitHub                 1   1.3%                              |
+| Spotify                1   1.3%                              |
+| Instagram              1   1.3%                              |
+| Twitter/X              1   1.3%                              |
+| Netflix                1   1.3%                              |
+| Telegram               1   1.3%                              |
+| Discord                1   1.3%                              |
+| Apple                  1   1.3%                              |
+| Facebook               1   1.3%                              |
+| Google                 1   1.3%                              |
++--------------------------------------------------------------+
 
 [Detected Domains/SNIs]
+  - discord.com -> Discord
   - example.com -> HTTPS
+  - github.com -> GitHub
   - httpbin.org -> HTTPS
+  - open.spotify.com -> Spotify
+  - twitter.com -> Twitter/X
+  - web.telegram.org -> Telegram
+  - www.amazon.com -> Amazon
+  - www.apple.com -> Apple
+  - www.cloudflare.com -> Cloudflare
+  - www.facebook.com -> Facebook
+  - www.google.com -> Google
+  - www.instagram.com -> Instagram
+  - www.microsoft.com -> Microsoft
+  - www.netflix.com -> Netflix
+  - www.tiktok.com -> TikTok
+  - www.youtube.com -> YouTube
+  - zoom.us -> Zoom
 
 Processing complete!
 Output written to: ..\output_java.pcap
@@ -810,7 +845,38 @@ Output written to: ..\output_java.pcap
 
 ---
 
-## 12. Extending the Project
+## 12. Performance Benchmark & Concurrency Analysis
+
+To evaluate the throughput of our DPI system under load, we ran a performance benchmark processing **42,240 packets** containing 10,000 distinct flows (simulating TCP TLS Client Hello connections and UDP DNS queries). We compared our single-threaded engine (`MainSimple`) against our multi-threaded, load-balanced engine (`MainDpi` utilizing 4 fast-path workers and 2 load balancers).
+
+### Benchmark Results
+| Metric | Single-threaded (`MainSimple`) | Multi-threaded (`MainDpi`) |
+| :--- | :--- | :--- |
+| **Total Packets** | 42,240 | 42,240 |
+| **Execution Time** | 683.96 ms | 1,241.12 ms |
+| **Throughput** | **61,758.03 packets/sec** | **34,033.69 packets/sec** |
+| **Relative Performance** | **1.0x** (Baseline) | **0.55x** |
+
+### Concurrency Deep-Dive: Understanding the 0.55x Bottleneck
+
+At first glance, one might expect a multi-threaded engine to run faster. However, in low-level systems programming, parallelizing extremely lightweight tasks introduces classic synchronization and scheduling bottlenecks:
+
+1. **High Synchronization-to-Work Ratio**:
+   Byte-level header decoding (IP/TCP) and SNI extraction take **less than 1 microsecond** of CPU time per packet. In contrast, transferring a `PacketJob` across a `LinkedBlockingQueue` involves reentrant lock acquisition, condition variable signaling, and CPU cache line invalidations, which takes **5 to 10 microseconds** per queue.
+2. **Multi-Stage Queue Contention**:
+   The multi-threaded engine transfers each packet across **three queue boundaries**:
+   `Reader (Main Thread) ➔ [Queue] ➔ Load Balancer Thread ➔ [Queue] ➔ Fast Path Worker Thread ➔ [Queue] ➔ Output Writer Thread`
+   This triple-queuing structure multiplies lock contention, turning thread synchronization into the primary bottleneck.
+3. **Single File I/O Serialization**:
+   Because both engines read from a single PCAP input file and write to a single PCAP output file, the disk I/O serialized at the beginning and end of the pipeline limits overall speedup.
+4. **When Multi-threading Wins**:
+   In production setups, multi-threaded pipelines out-perform single-threaded ones under two conditions:
+   - **Expensive Inspection Rules**: If Layer-7 inspection involves regex searching, payload decompression, or intrusion detection signatures (which are highly CPU-intensive and take milliseconds), the queue overhead is fully amortized.
+   - **Hardware NIC Queues**: If packets are read from sharded hardware receive queues (RSS) and processed entirely in memory without writing to a single serialized file.
+
+---
+
+## 13. Extending the Project
 
 ### Ideas for Improvement
 
