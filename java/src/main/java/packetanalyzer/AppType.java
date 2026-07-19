@@ -65,57 +65,119 @@ public enum AppType {
             return UNKNOWN;
         }
         String lowerSni = sni.toLowerCase();
-        if (lowerSni.contains("google") || lowerSni.contains("gstatic") || lowerSni.contains("googleapis") || lowerSni.contains("ggpht") || lowerSni.contains("gvt1")) {
+        
+        if (matchesDomainOrSubdomain(lowerSni, "google.com") || 
+            matchesDomainOrSubdomain(lowerSni, "gstatic.com") || 
+            matchesDomainOrSubdomain(lowerSni, "googleapis.com") || 
+            matchesDomainOrSubdomain(lowerSni, "ggpht.com") || 
+            matchesDomainOrSubdomain(lowerSni, "gvt1.com") ||
+            lowerSni.contains("google")) {
             return GOOGLE;
         }
-        if (lowerSni.contains("youtube") || lowerSni.contains("ytimg") || lowerSni.contains("youtu.be") || lowerSni.contains("yt3.ggpht")) {
+        if (matchesDomainOrSubdomain(lowerSni, "youtube.com") || 
+            matchesDomainOrSubdomain(lowerSni, "youtu.be") || 
+            matchesDomainOrSubdomain(lowerSni, "ytimg.com") || 
+            matchesDomainOrSubdomain(lowerSni, "yt3.ggpht.com") ||
+            lowerSni.contains("youtube")) {
             return YOUTUBE;
         }
-        if (lowerSni.contains("facebook") || lowerSni.contains("fbcdn") || lowerSni.contains("fb.com") || lowerSni.contains("fbsbx") || lowerSni.contains("meta.com")) {
+        if (matchesDomainOrSubdomain(lowerSni, "facebook.com") || 
+            matchesDomainOrSubdomain(lowerSni, "fb.com") || 
+            matchesDomainOrSubdomain(lowerSni, "fbcdn.net") || 
+            matchesDomainOrSubdomain(lowerSni, "fbsbx.com") || 
+            matchesDomainOrSubdomain(lowerSni, "meta.com") ||
+            lowerSni.contains("facebook")) {
             return FACEBOOK;
         }
-        if (lowerSni.contains("instagram") || lowerSni.contains("cdninstagram")) {
+        if (matchesDomainOrSubdomain(lowerSni, "instagram.com") || 
+            matchesDomainOrSubdomain(lowerSni, "cdninstagram.com") ||
+            lowerSni.contains("instagram")) {
             return INSTAGRAM;
         }
-        if (lowerSni.contains("whatsapp") || lowerSni.contains("wa.me")) {
+        if (matchesDomainOrSubdomain(lowerSni, "whatsapp.com") || 
+            matchesDomainOrSubdomain(lowerSni, "wa.me") ||
+            lowerSni.contains("whatsapp")) {
             return WHATSAPP;
         }
-        if (lowerSni.contains("twitter") || lowerSni.contains("twimg") || lowerSni.contains("x.com") || lowerSni.contains("t.co")) {
+        if (matchesDomainOrSubdomain(lowerSni, "twitter.com") || 
+            matchesDomainOrSubdomain(lowerSni, "x.com") || 
+            matchesDomainOrSubdomain(lowerSni, "t.co") || 
+            matchesDomainOrSubdomain(lowerSni, "twimg.com") ||
+            lowerSni.contains("twitter")) {
             return TWITTER;
         }
-        if (lowerSni.contains("netflix") || lowerSni.contains("nflxvideo") || lowerSni.contains("nflximg")) {
+        if (matchesDomainOrSubdomain(lowerSni, "netflix.com") || 
+            lowerSni.contains("nflxvideo") || 
+            lowerSni.contains("nflximg") ||
+            lowerSni.contains("netflix")) {
             return NETFLIX;
         }
-        if (lowerSni.contains("amazon") || lowerSni.contains("amazonaws") || lowerSni.contains("cloudfront") || lowerSni.contains("aws")) {
+        if (matchesDomainOrSubdomain(lowerSni, "amazon.com") || 
+            matchesDomainOrSubdomain(lowerSni, "amazonaws.com") || 
+            matchesDomainOrSubdomain(lowerSni, "cloudfront.net") ||
+            lowerSni.contains("amazon")) {
             return AMAZON;
         }
-        if (lowerSni.contains("microsoft") || lowerSni.contains("msn.com") || lowerSni.contains("office") || lowerSni.contains("azure") || lowerSni.contains("live.com") || lowerSni.contains("outlook") || lowerSni.contains("bing")) {
+        if (matchesDomainOrSubdomain(lowerSni, "microsoft.com") || 
+            matchesDomainOrSubdomain(lowerSni, "msn.com") || 
+            matchesDomainOrSubdomain(lowerSni, "office.com") || 
+            matchesDomainOrSubdomain(lowerSni, "office.net") || 
+            matchesDomainOrSubdomain(lowerSni, "azure.com") || 
+            matchesDomainOrSubdomain(lowerSni, "live.com") || 
+            matchesDomainOrSubdomain(lowerSni, "outlook.com") || 
+            matchesDomainOrSubdomain(lowerSni, "bing.com") ||
+            lowerSni.contains("microsoft") ||
+            lowerSni.contains("windows")) {
             return MICROSOFT;
         }
-        if (lowerSni.contains("apple") || lowerSni.contains("icloud") || lowerSni.contains("mzstatic") || lowerSni.contains("itunes")) {
+        if (matchesDomainOrSubdomain(lowerSni, "apple.com") || 
+            matchesDomainOrSubdomain(lowerSni, "icloud.com") || 
+            matchesDomainOrSubdomain(lowerSni, "mzstatic.com") || 
+            matchesDomainOrSubdomain(lowerSni, "itunes.com") ||
+            lowerSni.contains("apple")) {
             return APPLE;
         }
-        if (lowerSni.contains("telegram") || lowerSni.contains("t.me")) {
+        if (matchesDomainOrSubdomain(lowerSni, "telegram.org") || 
+            matchesDomainOrSubdomain(lowerSni, "t.me") ||
+            lowerSni.contains("telegram")) {
             return TELEGRAM;
         }
-        if (lowerSni.contains("tiktok") || lowerSni.contains("tiktokcdn") || lowerSni.contains("musical.ly") || lowerSni.contains("bytedance")) {
+        if (matchesDomainOrSubdomain(lowerSni, "tiktok.com") || 
+            matchesDomainOrSubdomain(lowerSni, "tiktokcdn.com") || 
+            matchesDomainOrSubdomain(lowerSni, "musical.ly") || 
+            matchesDomainOrSubdomain(lowerSni, "bytedance.com") ||
+            lowerSni.contains("tiktok")) {
             return TIKTOK;
         }
-        if (lowerSni.contains("spotify") || lowerSni.contains("scdn.co")) {
+        if (matchesDomainOrSubdomain(lowerSni, "spotify.com") || 
+            matchesDomainOrSubdomain(lowerSni, "scdn.co") ||
+            lowerSni.contains("spotify")) {
             return SPOTIFY;
         }
-        if (lowerSni.contains("zoom")) {
+        if (matchesDomainOrSubdomain(lowerSni, "zoom.us") || 
+            matchesDomainOrSubdomain(lowerSni, "zoom.com") ||
+            lowerSni.contains("zoom")) {
             return ZOOM;
         }
-        if (lowerSni.contains("discord") || lowerSni.contains("discordapp")) {
+        if (matchesDomainOrSubdomain(lowerSni, "discord.com") || 
+            matchesDomainOrSubdomain(lowerSni, "discordapp.com") || 
+            matchesDomainOrSubdomain(lowerSni, "discord.gg") ||
+            lowerSni.contains("discord")) {
             return DISCORD;
         }
-        if (lowerSni.contains("github") || lowerSni.contains("githubusercontent")) {
+        if (matchesDomainOrSubdomain(lowerSni, "github.com") || 
+            matchesDomainOrSubdomain(lowerSni, "githubusercontent.com") ||
+            lowerSni.contains("github")) {
             return GITHUB;
         }
-        if (lowerSni.contains("cloudflare") || lowerSni.contains("cf-")) {
+        if (matchesDomainOrSubdomain(lowerSni, "cloudflare.com") || 
+            lowerSni.contains("cloudflare")) {
             return CLOUDFLARE;
         }
         return HTTPS;
+    }
+
+    private static boolean matchesDomainOrSubdomain(String sni, String domain) {
+        return sni.equals(domain) || sni.endsWith("." + domain);
     }
 }

@@ -46,6 +46,18 @@ public class DpiEngineTest {
         assertEquals(AppType.YOUTUBE, AppType.sniToAppType(sni));
     }
 
+    @Test
+    public void testAppClassifierCollisions() {
+        assertEquals(AppType.NETFLIX, AppType.sniToAppType("www.netflix.com"));
+        assertEquals(AppType.MICROSOFT, AppType.sniToAppType("www.microsoft.com"));
+        assertEquals(AppType.TWITTER, AppType.sniToAppType("x.com"));
+        assertEquals(AppType.TWITTER, AppType.sniToAppType("www.x.com"));
+        assertEquals(AppType.TWITTER, AppType.sniToAppType("t.co"));
+        assertEquals(AppType.GOOGLE, AppType.sniToAppType("www.google.com"));
+        assertEquals(AppType.FACEBOOK, AppType.sniToAppType("www.facebook.com"));
+        assertEquals(AppType.YOUTUBE, AppType.sniToAppType("www.youtube.com"));
+    }
+
     private byte[] createTlsClientHello(String sni) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
