@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- */
 package packetanalyzer;
 
 import java.nio.ByteOrder;
@@ -236,27 +233,27 @@ implements FastPathProcessor.PacketOutputCallback {
 
     private void printReport() {
         System.out.println();
-        System.out.println("\u2554" + "\u2550".repeat(62) + "\u2557");
-        System.out.println("\u2551                      PROCESSING REPORT                        \u2551");
-        System.out.println("\u2560" + "\u2550".repeat(62) + "\u2563");
-        System.out.printf("\u2551 Total Packets:      %12d                             \u2551\n", this.stats.totalPackets.get());
-        System.out.printf("\u2551 Total Bytes:        %12d                             \u2551\n", this.stats.totalBytes.get());
-        System.out.printf("\u2551 TCP Packets:        %12d                             \u2551\n", this.stats.tcpPackets.get());
-        System.out.printf("\u2551 UDP Packets:        %12d                             \u2551\n", this.stats.udpPackets.get());
-        System.out.println("\u2560" + "\u2550".repeat(62) + "\u2563");
-        System.out.printf("\u2551 Forwarded:          %12d                             \u2551\n", this.stats.forwardedPackets.get());
-        System.out.printf("\u2551 Dropped:            %12d                             \u2551\n", this.stats.droppedPackets.get());
-        System.out.println("\u2560" + "\u2550".repeat(62) + "\u2563");
-        System.out.println("\u2551 THREAD STATISTICS                                             \u2551");
+        System.out.println("+" + "-".repeat(62) + "+");
+        System.out.println("|                      PROCESSING REPORT                        |");
+        System.out.println("+" + "-".repeat(62) + "+");
+        System.out.printf("| Total Packets:      %12d                             |\n", this.stats.totalPackets.get());
+        System.out.printf("| Total Bytes:        %12d                             |\n", this.stats.totalBytes.get());
+        System.out.printf("| TCP Packets:        %12d                             |\n", this.stats.tcpPackets.get());
+        System.out.printf("| UDP Packets:        %12d                             |\n", this.stats.udpPackets.get());
+        System.out.println("+" + "-".repeat(62) + "+");
+        System.out.printf("| Forwarded:          %12d                             |\n", this.stats.forwardedPackets.get());
+        System.out.printf("| Dropped:            %12d                             |\n", this.stats.droppedPackets.get());
+        System.out.println("+" + "-".repeat(62) + "+");
+        System.out.println("| THREAD STATISTICS                                             |");
         int i = 0;
         while (i < this.lbManager.getNumLBs()) {
             LoadBalancer.LBStats lbStats = this.lbManager.getLB(i).getStats();
-            System.out.printf("\u2551   LB%d dispatched:   %12d                             \u2551\n", i, lbStats.packetsDispatched);
+            System.out.printf("|   LB%d dispatched:   %12d                             |\n", i, lbStats.packetsDispatched);
             ++i;
         }
         i = 0;
         while (i < this.fpManager.getNumFPs()) {
-            System.out.printf("\u2551   FP%d processed:    %12d                             \u2551\n", i, this.fpManager.getFP((int)i).getStats().packetsProcessed);
+            System.out.printf("|   FP%d processed:    %12d                             |\n", i, this.fpManager.getFP((int)i).getStats().packetsProcessed);
             ++i;
         }
         HashMap<AppType, Long> appCounts = new HashMap<AppType, Long>();
@@ -272,9 +269,9 @@ implements FastPathProcessor.PacketOutputCallback {
             }
             ++i2;
         }
-        System.out.println("\u2560" + "\u2550".repeat(62) + "\u2563");
-        System.out.println("\u2551                   APPLICATION BREAKDOWN                       \u2551");
-        System.out.println("\u2560" + "\u2550".repeat(62) + "\u2563");
+        System.out.println("+" + "-".repeat(62) + "+");
+        System.out.println("|                   APPLICATION BREAKDOWN                       |");
+        System.out.println("+" + "-".repeat(62) + "+");
         ArrayList<Map.Entry<AppType, Long>> sortedApps = new ArrayList<>(appCounts.entrySet());
         sortedApps.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         long total = this.stats.totalPackets.get();
@@ -282,9 +279,9 @@ implements FastPathProcessor.PacketOutputCallback {
             double pct = total > 0L ? 100.0 * (double)entry.getValue().longValue() / (double)total : 0.0;
             int barLen = (int)(pct / 5.0);
             String barStr = "#".repeat(barLen);
-            System.out.printf("\u2551 %-15s %8d %5.1f%% %-20s         \u2551\n", entry.getKey().toStringName(), entry.getValue(), pct, barStr);
+            System.out.printf("| %-15s %8d %5.1f%% %-20s         |\n", entry.getKey().toStringName(), entry.getValue(), pct, barStr);
         }
-        System.out.println("\u255a" + "\u2550".repeat(62) + "\u255d");
+        System.out.println("+" + "-".repeat(62) + "+");
         if (!detectedSnis.isEmpty()) {
             System.out.println("\n[Detected Domains/SNIs]");
             for (Map.Entry entry : detectedSnis.entrySet()) {

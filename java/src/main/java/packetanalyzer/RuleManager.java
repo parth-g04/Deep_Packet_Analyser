@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- */
 package packetanalyzer;
 
 import java.io.BufferedReader;
@@ -174,10 +171,12 @@ public class RuleManager {
         }
         this.domainLock.readLock().lock();
         try {
-            if (this.blockedDomains.contains(domain)) {
-                return true;
-            }
             String lowerDomain = domain.toLowerCase();
+            for (String blockedDomain : this.blockedDomains) {
+                if (lowerDomain.contains(blockedDomain.toLowerCase())) {
+                    return true;
+                }
+            }
             for (String pattern : this.domainPatterns) {
                 String lowerPattern = pattern.toLowerCase();
                 if (!RuleManager.domainMatchesPattern(lowerDomain, lowerPattern)) continue;

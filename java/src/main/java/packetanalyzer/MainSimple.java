@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- */
 package packetanalyzer;
 
 import java.util.ArrayList;
@@ -40,9 +37,9 @@ public class MainSimple {
             ++i;
         }
         System.out.println("\n");
-        System.out.println("\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557");
-        System.out.println("\u2551                    DPI ENGINE v1.0 (Simple Java)              \u2551");
-        System.out.println("\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n");
+        System.out.println("+" + "-".repeat(62) + "+");
+        System.out.println("|                    DPI ENGINE v1.0 (Simple Java)              |");
+        System.out.println("+" + "-".repeat(62) + "+");
         HashMap<FiveTuple, Flow> flows = new HashMap<FiveTuple, Flow>();
         long totalPackets = 0L;
         long forwarded = 0L;
@@ -111,25 +108,25 @@ public class MainSimple {
                 writer.writePacket(raw.header, raw.data);
             }
             System.out.println("\n");
-            System.out.println("\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557");
-            System.out.println("\u2551                      PROCESSING REPORT                       \u2551");
-            System.out.println("\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563");
-            System.out.printf("\u2551 Total Packets:      %-10d                               \u2551\n", totalPackets);
-            System.out.printf("\u2551 Forwarded:          %-10d                               \u2551\n", forwarded);
-            System.out.printf("\u2551 Dropped:            %-10d                               \u2551\n", dropped);
-            System.out.printf("\u2551 Active Flows:       %-10d                               \u2551\n", flows.size());
-            System.out.println("\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563");
-            System.out.println("\u2551                    APPLICATION BREAKDOWN                     \u2551");
-            System.out.println("\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563");
+            System.out.println("+" + "-".repeat(62) + "+");
+            System.out.println("|                      PROCESSING REPORT                       |");
+            System.out.println("+" + "-".repeat(62) + "+");
+            System.out.printf("| Total Packets:      %-10d                               |\n", totalPackets);
+            System.out.printf("| Forwarded:          %-10d                               |\n", forwarded);
+            System.out.printf("| Dropped:            %-10d                               |\n", dropped);
+            System.out.printf("| Active Flows:       %-10d                               |\n", flows.size());
+            System.out.println("+" + "-".repeat(62) + "+");
+            System.out.println("|                    APPLICATION BREAKDOWN                     |");
+            System.out.println("+" + "-".repeat(62) + "+");
             ArrayList<Map.Entry<AppType, Long>> sortedApps = new ArrayList<>(appStats.entrySet());
             sortedApps.sort((a, b) -> b.getValue().compareTo(a.getValue()));
             for (Map.Entry<AppType, Long> entry : sortedApps) {
                 double pct = totalPackets > 0L ? 100.0 * (double)entry.getValue().longValue() / (double)totalPackets : 0.0;
                 int barLen = (int)(pct / 5.0);
                 String bar = "#".repeat(barLen);
-                System.out.printf("\u2551 %-15s %-8d %5.1f%% %-20s  \u2551\n", entry.getKey().toStringName(), entry.getValue(), pct, bar);
+                System.out.printf("| %-15s %-8d %5.1f%% %-20s  |\n", entry.getKey().toStringName(), entry.getValue(), pct, bar);
             }
-            System.out.println("\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d");
+            System.out.println("+" + "-".repeat(62) + "+");
             System.out.println("\n[Detected Applications/Domains]");
             HashMap<String, AppType> hashMap = new HashMap<String, AppType>();
             for (Flow flow : flows.values()) {

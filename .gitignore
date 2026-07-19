@@ -1,0 +1,22 @@
+# Compiled class files
+*.class
+java/target/
+
+# Log files
+*.log
+
+# Generated output files
+output*.pcap
+output.pcap
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE configuration files
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
