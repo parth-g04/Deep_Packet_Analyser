@@ -30,40 +30,53 @@ public class SNIExtractor {
     }
 
     public static String extractSNI(byte[] payload, int offset, int length) {
-        int extensionsLength;
-        int extensionsEnd;
-        int compressionMethodsLength;
-        int cipherSuitesLength;
-        int sessionIdLength;
         if (!SNIExtractor.isTLSClientHello(payload, offset, length)) {
             return null;
         }
         int idx = offset + 5;
-        int handshakeLength = SNIExtractor.readUint24BE(payload, idx + 1);
-        idx += 4;
+        idx += 4; // skip handshake type and length
+        idx += 2; // skip client version
+        idx += 32; // skip client random
+        
+        if (idx >= offset + length) {
+            return null;
+        }
+        int sessionIdLength = payload[idx] & 0xFF;
+        idx += 1 + sessionIdLength;
+        
+        if (idx + 2 > offset + length) {
+            return null;
+        }
+        int cipherSuitesLength = SNIExtractor.readUint16BE(payload, idx);
+        idx += 2 + cipherSuitesLength;
+        
+        if (idx >= offset + length) {
+            return null;
+        }
+        int compressionMethodsLength = payload[idx] & 0xFF;
+        idx += 1 + compressionMethodsLength;
+        
+        if (idx + 2 > offset + length) {
+            return null;
+        }
+        int extensionsLength = SNIExtractor.readUint16BE(payload, idx);
         idx += 2;
-        if ((idx += 32) >= offset + length) {
-            return null;
-        }
-        if ((idx += 1 + (sessionIdLength = payload[idx] & 0xFF)) + 2 > offset + length) {
-            return null;
-        }
-        if ((idx += 2 + (cipherSuitesLength = SNIExtractor.readUint16BE(payload, idx))) >= offset + length) {
-            return null;
-        }
-        if ((idx += 1 + (compressionMethodsLength = payload[idx] & 0xFF)) + 2 > offset + length) {
-            return null;
-        }
-        if ((extensionsEnd = (idx += 2) + (extensionsLength = SNIExtractor.readUint16BE(payload, idx))) > offset + length) {
+        
+        int extensionsEnd = idx + extensionsLength;
+        if (extensionsEnd > offset + length) {
             extensionsEnd = offset + length;
         }
         while (idx + 4 <= extensionsEnd) {
-            int extensionLength;
             int extensionType = SNIExtractor.readUint16BE(payload, idx);
-            if ((idx += 4) + (extensionLength = SNIExtractor.readUint16BE(payload, idx + 2)) > extensionsEnd) break;
+            int extensionLength = SNIExtractor.readUint16BE(payload, idx + 2);
+            idx += 4;
+            if (idx + extensionLength > extensionsEnd) {
+                break;
+            }
             if (extensionType == 0) {
-                int sniListLength;
-                if (extensionLength < 5 || (sniListLength = SNIExtractor.readUint16BE(payload, idx)) < 3) break;
+                if (extensionLength < 5) break;
+                int sniListLength = SNIExtractor.readUint16BE(payload, idx);
+                if (sniListLength < 3) break;
                 int sniType = payload[idx + 2] & 0xFF;
                 int sniLength = SNIExtractor.readUint16BE(payload, idx + 3);
                 if (sniType != 0 || sniLength > extensionLength - 5) break;
